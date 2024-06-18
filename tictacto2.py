@@ -43,7 +43,8 @@ class tictactoe:
 
                 return storage
 
-    def run_game(self):
+    #TODO: Add type hints
+    def run_game(self, squares: int, size, storage):
         """Loop for running the game"""
         while True:
             for event in pygame.event.get():
