@@ -1,6 +1,7 @@
 import pygame
 import sys
 import sprite
+from typing import List
 
 class tictactoe:
     """Background screen to be called into main  tic tak toe game"""
@@ -43,8 +44,7 @@ class tictactoe:
 
                 return storage
 
-    #TODO: Add type hints
-    def run_game(self, squares: int, size, storage):
+    def run_game(self, squares: int, size: List[int], storage: List[int]):
         """Loop for running the game"""
         while True:
             for event in pygame.event.get():
@@ -59,5 +59,5 @@ class tictactoe:
             pygame.display.flip()
 
 if __name__ == '__main__':
-    ai = tictactoe()
+    ai = tictactoe(3,)
     ai.run_game()
