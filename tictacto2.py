@@ -1,3 +1,4 @@
+from time import sleep
 import pygame
 import sys
 import sprite
@@ -13,12 +14,14 @@ class tictactoe:
         self.bg_color = (255,255,255)
         pygame.display.set_caption("TicTacToe")
 
-        self.tiles_ID = {'z1':(0,0),'z2':(1,0),'z3':(2,0),'z4':(0,1),'z5':(1,1),'z6':(2,2),
-                         'z7':(0,3),'z8':(1,3),'z9':(2,3),'z10':(3,3)}
+        self.tiles_ID = {'z1':(0,0),'z2':(1,0),'z3':(2,0),'z4':(0,1),'z5':(1,1),'z6':(1,2),
+                         'z7':(0,3),'z8':(1,3),'z9':(2,3)}
+        self.tiles_Cent = {'z1':(50,50),'z2':(150,50),'z3':(250,50),'z4':(50,150),'z5':(150,150),'z6':(250,150),
+                           'z7':(50,250),'z8':(150,250),'z9':(250,250)}
         self.squares = squares
         self.size = size
-        self.clicking = False
-        
+        #self.mx = mx
+
     
     def render_board(self):
         storage =[]
@@ -35,40 +38,48 @@ class tictactoe:
 
         return storage
 
-    def clicking(self):
+    def click(self):
         """mouse button action. Pinpointing tile ID with a dictionary callout"""
-        while self.clicking = True:
-            colw = 100
-            rowh = 100
-            mx, my = pygame.mouse.get_pos()
+        colw = 100
+        rowh = 100
+        mx, my = pygame.mouse.get_pos()
+        mouse_list=[]
+        mloc = (mx, my)
+        rowm = my // colw
+        colm = mx // rowh
+        """Trying to see if the mouse position from clicking is recorded"""
+        mouse_list.append(mloc)
+        print(mloc)
             
-            mloc = [mx, my]
-            rowm = my // colw
-            colm = mx // rowh
-
-            print(rowm)
-
-
+    
     def run_game(self):
         """Loop for running the game"""
+        clock = pygame.time.Clock()
         while True:
             for event in pygame.event.get():
                 """Determine mouse click until moved into its own code to be called in"""
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     """creating the x,y position of mouse to be used in floor division""" 
                     if event.button == 1:
-                        self.clicking = True
-                        mx, my = pygame.mouse.get_pos()
-                        #print(mx, my)
+                        self.click()
                 """Quiting Pygame"""
                 if event.type == pygame.QUIT:
                     exit()
+            clock.tick(60)
                     
+            #storage = self.render_board()
             self.screen.fill(self.bg_color)
-
             storage = self.render_board()
-
             pygame.display.flip()
+           
+            
+
+    #def _update_sreen(self):
+        """Update the Screen"""
+        
+        self.screen.fill(self.bg_color)
+        #storage = self.render_board()
+        pygame.display.flip()
 
 if __name__ == '__main__':
     ai: tictactoe = None
