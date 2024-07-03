@@ -20,6 +20,7 @@ class tictactoe:
                            'z7':(50,250),'z8':(150,250),'z9':(250,250)}
         self.squares = squares
         self.size = size
+        
         #self.mx = mx
 
     
@@ -47,11 +48,20 @@ class tictactoe:
         mloc = (mx, my)
         rowm = my // colw
         colm = mx // rowh
-        """Trying to see if the mouse position from clicking is recorded"""
-        mouse_list.append(mloc)
-        print(mloc)
-            
-    
+        
+    def letters(self):
+        """Defition for the X, placement"""
+        textcolor = (255, 0, 0)
+        font = pygame.font.Font(None, 50)
+        text = font.render('X', True, textcolor)
+        """Correlating the Key values to place text in the center of the square"""
+        xdict = self.tiles_Cent.get('z1')
+        #ydict = self.tiles_Cent.keys('z1')
+        textRect = text.get_rect()
+        #textRect.center = (xdict)
+        self.screen.blit(text, xdict)
+        pygame.display.flip()
+
     def run_game(self):
         """Loop for running the game"""
         clock = pygame.time.Clock()
@@ -62,11 +72,15 @@ class tictactoe:
                     """creating the x,y position of mouse to be used in floor division""" 
                     if event.button == 1:
                         self.click()
+                    if event.button == 1:
+                        self.letters()
+                    
                 """Quiting Pygame"""
                 if event.type == pygame.QUIT:
                     exit()
             clock.tick(60)
-                    
+            
+            #self.screen.blit(text, xdict)
             #storage = self.render_board()
             self.screen.fill(self.bg_color)
             storage = self.render_board()
