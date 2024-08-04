@@ -14,12 +14,17 @@ class tictactoe:
         self.bg_color = (255,255,255)
         pygame.display.set_caption("TicTacToe")
 
-        self.tiles_ID = {'z1':(0,0),'z2':(1,0),'z3':(2,0),'z4':(0,1),'z5':(1,1),'z6':(1,2),
-                         'z7':(0,3),'z8':(1,3),'z9':(2,3)}
+        self.tiles_ID = {'z1':(0,0),'z2':(1,0),'z3':(2,0),'z4':(0,1),'z5':(1,1),'z6':(2,1),
+                         'z7':(0,2),'z8':(1,2),'z9':(2,2)}
         self.tiles_Cent = {'z1':(50,50),'z2':(150,50),'z3':(250,50),'z4':(50,150),'z5':(150,150),'z6':(250,150),
                            'z7':(50,250),'z8':(150,250),'z9':(250,250)}
         self.squares = squares
         self.size = size
+        self.usedcord:List[int] = []
+        self.cantcord = []
+        self.foundcord:tuple[int] = ()
+        self.selectedkey = ()
+        
         
         #self.mx = mx
 
@@ -46,25 +51,48 @@ class tictactoe:
         mx, my = pygame.mouse.get_pos()
         mouse_list=[]
         mloc = (mx, my)
+        #ccoord = (rowm, colm)
         rowm = my // colw
         colm = mx // rowh
-        
+        key_list = list(self.tiles_ID.keys())
+        val_list = list(self.tiles_Cent.keys())
+        corvar = (colm,rowm)
+        #player taken coordinates stored in a list.
+
+        for i, j in self.tiles_ID.items():
+            for i in (self.cantcord):
+                if i == self.cantcord:
+                    break
+            if j == corvar:
+                for ii, jj in self.tiles_Cent.items():
+                    if i == ii:
+                        self.foundcord=jj
+                        self.selectedkey = ii
+
+        self.cantcord.append(self.selectedkey)
+        print(self.selectedkey)   
+        print(self.cantcord)  
+        print(type(self.cantcord))  
+
     def letters(self):
         """Defition for the X, placement"""
         textcolor = (255, 0, 0)
         font = pygame.font.Font(None, 50)
-        text = font.render('X', True, textcolor)
+        text1 = font.render('X', True, textcolor)
+        text2 = font.render('O', True, textcolor)
         """Correlating the Key values to place text in the center of the square"""
-        xdict = self.tiles_Cent.get('z1')
+        ploc = (self.foundcord)
         #ydict = self.tiles_Cent.keys('z1')
-        textRect = text.get_rect()
-        #textRect.center = (xdict)
-        self.screen.blit(text, xdict)
+        textRect = text1.get_rect()
+        textRect.center = (ploc)
+        self.screen.blit(text1, ploc)
         pygame.display.flip()
 
     def run_game(self):
         """Loop for running the game"""
         clock = pygame.time.Clock()
+        self.screen.fill(self.bg_color)
+        self.render_board()
         while True:
             for event in pygame.event.get():
                 """Determine mouse click until moved into its own code to be called in"""
@@ -72,18 +100,13 @@ class tictactoe:
                     """creating the x,y position of mouse to be used in floor division""" 
                     if event.button == 1:
                         self.click()
-                    if event.button == 1:
                         self.letters()
                     
                 """Quiting Pygame"""
                 if event.type == pygame.QUIT:
                     exit()
             clock.tick(60)
-            
-            #self.screen.blit(text, xdict)
-            #storage = self.render_board()
-            self.screen.fill(self.bg_color)
-            storage = self.render_board()
+    
             pygame.display.flip()
            
             
