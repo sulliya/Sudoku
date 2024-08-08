@@ -60,8 +60,12 @@ class tictactoe:
         #player taken coordinates stored in a list.
 
         for i, j in self.tiles_ID.items():
-            for i in (self.cantcord):
-                if i == self.cantcord:
+            p = i
+            deliminter = ','
+            teststring = deliminter.join(self.cantcord)
+            for p in (teststring):
+                
+                if p == teststring:
                     break
             if j == corvar:
                 for ii, jj in self.tiles_Cent.items():
@@ -70,7 +74,7 @@ class tictactoe:
                         self.selectedkey = ii
 
         self.cantcord.append(self.selectedkey)
-        print(self.selectedkey)   
+        #print(self.selectedkey)   
         print(self.cantcord)  
         print(type(self.cantcord))  
 
