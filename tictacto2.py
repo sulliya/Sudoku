@@ -24,7 +24,7 @@ class tictactoe:
         self.cantcord = []
         self.foundcord:tuple[int] = ()
         self.selectedkey = ()
-        
+        self.compcord:tuple[int] = ()
         
         #self.mx = mx
 
@@ -60,23 +60,22 @@ class tictactoe:
         #player taken coordinates stored in a list.
 
         for i, j in self.tiles_ID.items():
-            p = i
-            deliminter = ','
-            teststring = deliminter.join(self.cantcord)
-            for p in (teststring):
-                
-                if p == teststring:
-                    break
+            if i in self.cantcord:
+                break
             if j == corvar:
                 for ii, jj in self.tiles_Cent.items():
                     if i == ii:
                         self.foundcord=jj
                         self.selectedkey = ii
+                        if not self.selectedkey in self.cantcord:
+                            self.cantcord.append(self.selectedkey)
 
-        self.cantcord.append(self.selectedkey)
         #print(self.selectedkey)   
         print(self.cantcord)  
         print(type(self.cantcord))  
+
+
+
 
     def letters(self):
         """Defition for the X, placement"""
@@ -86,10 +85,12 @@ class tictactoe:
         text2 = font.render('O', True, textcolor)
         """Correlating the Key values to place text in the center of the square"""
         ploc = (self.foundcord)
+        ploc2 = (self.compcord)
         #ydict = self.tiles_Cent.keys('z1')
         textRect = text1.get_rect()
         textRect.center = (ploc)
         self.screen.blit(text1, ploc)
+        #self.screen.blit(text2,ploc2)
         pygame.display.flip()
 
     def run_game(self):
