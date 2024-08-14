@@ -3,6 +3,7 @@ import pygame
 import sys
 import sprite
 from typing import List
+import random
 
 class tictactoe:
     """Background screen to be called into main  tic tak toe game"""
@@ -20,11 +21,12 @@ class tictactoe:
                            'z7':(50,250),'z8':(150,250),'z9':(250,250)}
         self.squares = squares
         self.size = size
-        self.usedcord:List[int] = []
-        self.cantcord = []
-        self.foundcord:tuple[int] = ()
+        self.opencord:List[int] = list(self.tiles_Cent.keys())
+        self.cantcord:list[int] = []
+        self.foundcord:[int] = ()
         self.selectedkey = ()
-        self.compcord:tuple[int] = ()
+        self.compcord:[int] = []
+        self.playercord = ()
         
         #self.mx = mx
 
@@ -58,7 +60,7 @@ class tictactoe:
         val_list = list(self.tiles_Cent.keys())
         corvar = (colm,rowm)
         #player taken coordinates stored in a list.
-
+        
         for i, j in self.tiles_ID.items():
             if i in self.cantcord:
                 break
@@ -69,11 +71,17 @@ class tictactoe:
                         self.selectedkey = ii
                         if not self.selectedkey in self.cantcord:
                             self.cantcord.append(self.selectedkey)
+                        if self.selectedkey in self.opencord:
+                            self.opencord.remove(self.selectedkey)
+
+            
+                        rc = random.choice(self.opencord)
+                        self.compcord = self.tiles_Cent.get(rc)
+                        self.opencord.remove(rc)
 
         #print(self.selectedkey)   
         print(self.cantcord)  
-        print(type(self.cantcord))  
-
+        print(self.opencord)
 
 
 
@@ -90,8 +98,21 @@ class tictactoe:
         textRect = text1.get_rect()
         textRect.center = (ploc)
         self.screen.blit(text1, ploc)
-        #self.screen.blit(text2,ploc2)
+        self.screen.blit(text2,ploc2)
         pygame.display.flip()
+
+    def wingame(self):
+        """Definition to win this fucking game"""
+        self.winning = {win1:('z1','z2','z3'), win2:('z4','z5','z6'), win3:('z7','z8','z9'), win4:('z1','z4','z7'), win5:('z2','z5','z8'),
+                   win6:('z3','z6','z9'), win7:('z1','z5','z9'), win8:('z3','z5','z7')}
+        for i in self.winning:
+            if self.playercord == self.winning
+            print("You've Won")
+            if self.compcord == self.winning
+            print("You've lost")
+            if self.opencord == ()
+            print("Tie")
+
 
     def run_game(self):
         """Loop for running the game"""
