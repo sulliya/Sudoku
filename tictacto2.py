@@ -63,7 +63,7 @@ class tictactoe:
         
         for i, j in self.tiles_ID.items():
             if i in self.cantcord:
-                break
+                continue
             if j == corvar:
                 for ii, jj in self.tiles_Cent.items():
                     if i == ii:
