@@ -26,10 +26,13 @@ class Sudoku:
         self.rect_ID = {}
         self.grid:[int] = 9
         self.board_background:[str] = [[""]*self.grid for i in range(self.grid)]
-        
+        self.testboard:[str] = [['1','2','3','4','5','6','7','8','9'],['1','2','3','4','5','6','7','8','9'],['1','2','3','4','5','6','7','8','9']]
+        self.color = pygame.Color('firebrick')
+        #temp note: input_rect is working not on location of click but hard code, having a scope issue
+        self.input_rect = pygame.Rect(0,0,50,25)
+        self.user_text =''
 
-
-    def render_board(self):
+    def render_board(self): #Note: This code is fine and doesn't need editing
         '''creating the grid space moving in x & y direction'''
         storage =[]
         x = int((700 - (self.size[0] * self.squares [0]))/2)
@@ -56,35 +59,28 @@ class Sudoku:
         print(self.corvar)
         print(mx,my)
 
-
-        '''testing grid center with coordinate location'''
-        grid_center:[int] =[]
-        for i in range(0,700,38):
-            grid_center.append(i)
-        grid_center= grid_center[1:18:2]
-        print(grid_center[self.colm],grid_center[self.rowm])
-
-        '''testing code'''
-        userlist = []
-        userlist = self.board_background[j:j + 3] for j in range(0,9,3)
-      
     def list_loop(self):
         '''Creating a single list for center points, b/c the grid is a square, x&y values incriments uniformly'''
         grid_center:[int] =[]
+        '''creating overall list up to boundry of grid by half of each square size'''
         for i in range(0,700,38):
             grid_center.append(i)
-        grid_centers= grid_center[1:18:2]
-        print(grid_centers)
+        '''Slicing the overall list by incriments of 2 get only the centers.'''
+        grid_center= grid_center[1:18:2]
+        print(grid_center[self.colm],grid_center[self.rowm])
         
         
     def user_input(self):
         '''Taking typed in string value and placing it into the open 2d array holding all values'''
         textcolor = (255, 0, 0)
-        font = pygame.font.Font(None, 50)
+        base_font = pygame.font.Font(None,25)
+        text_typed = base_font.render(self.user_text,True,textcolor)
         self.text_box = pygame.Rect(50,50,77,77)
-        user_ip =''
-        '''code to store coordinates in the empty 2d array'''
-        self.board_background[self.rowm][self.colm] = user_ip
+        '''code to store user input in the empty 2d array'''
+        #self.board_background[self.rowm][self.colm] = user_text
+        self.input_rect = pygame.Rect(self.rowm,self.colm,50,25)
+        self.screen.blit(text_typed,(self.rowm,self.colm))
+        
 
 
     def win_logic(self):
@@ -92,15 +88,19 @@ class Sudoku:
         #to be created
         '''Winning logic for the game'''
         checklist1:[list] = ['1','2','3','4','5','6','7','8','9']
-        checklist2:[list] = [['1','2','3'],['4','5','6'],['7','8','9']]
+        checklist2:[list] = [[1,2,3],[4,5,6],[7,8,9]]
         userlist:[list] = []
+        
         for i in self.board_background:
             '''checking that each layer has numbers 1-9 and no duplicates in the x & y'''
             if self.board_background[set(i) == checklist1][set(i) == checklist1]:
                 check1 = True
-            '''check 3x3 arrays have numbers 1-9 and no duplicates'''
+            '''Break lists of 9 into 3, then check to see if they conatain numbers 1-9'''
             '''Slicing the 2D 9x9 array into 3's to then stack and check'''
-            userlist = self.board_background[j:j + 3] for j in range(0,9,3)
+            '''converting string to int'''
+            listconv = []
+            cs = [int(y) for x in self.board_background for y in x]
+            listconv = [cs[j:j + 3] for j in range(0,9,3)]
 
 
             
@@ -121,18 +121,17 @@ class Sudoku:
                         self.user_input()
                         #self.list_loop()
                         #self.win_logic()
-                    if self.text_box.collidepoint(event.pos):
-                        active: True
-                    else:
-                        active = False
-                if event.type == pygame.KEYDOWN:
-                    """Creating text block input"""
-                    if active:
-                        if event.key == pygame.K_BACKSPACE:
-                            user_ip = user_ip[:-1]
-                        else:
-                            user_ip += event.unicode
+            #note: this works when in the click loop but doesn't show like I want.
+            #Also if typing and clicking again, it overwrites. 
+            if event.type == pygame.KEYDOWN:
+                """Adding user text"""
+                if event.key == pygame.K_BACKSPACE:
+                        self.user_text = self.user_text[:-1]
+                else:    
+                    self.user_text += event.unicode
 
+                '''trying to draw the input rectangle on the screen'''
+                #pygame.draw.rect(self.screen,self.color,self.input_rect,2)
 
 
                 """Quiting Pygame"""
