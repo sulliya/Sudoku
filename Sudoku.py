@@ -17,20 +17,23 @@ class Sudoku:
         pygame.display.set_caption("Sudoku")
         self.squares = squares
         self.size = size
-        self.colm:[int] = ()
-        self.rowm:[int] = ()
-        self.corvar:[list] = ()
-        self.rows:[int] = 9
-        self.cols:[int] = 9
+        self.colm: int = ()
+        self.rowm: int = ()
+        self.corvar: List = ()
+        self.rows:int = 9
+        self.cols: int = 9
         self.rectcent = ()
         self.rect_ID = {}
-        self.grid:[int] = 9
-        self.board_background:[str] = [[""]*self.grid for i in range(self.grid)]
-        self.testboard:[str] = [['1','2','3','4','5','6','7','8','9'],['1','2','3','4','5','6','7','8','9'],['1','2','3','4','5','6','7','8','9']]
+        self.grid: int = 9
+        self.board_background:List[str] = [[""]*self.grid for i in range(self.grid)]
+        self.testboard:List[str] = [['1','2','3','4','5','6','7','8','9'],['1','2','3','4','5','6','7','8','9'],
+                                    ['1','2','3','4','5','6','7','8','9']]
         self.color = pygame.Color('firebrick')
         #temp note: input_rect is working not on location of click but hard code, having a scope issue
         self.input_rect = pygame.Rect(0,0,50,25)
         self.user_text =''
+        self.gridcentvaluex:int = () #equals the value center ID based off clicking a square
+        self.gridcentervaluey:int = ()
 
     def render_board(self): #Note: This code is fine and doesn't need editing
         '''creating the grid space moving in x & y direction'''
@@ -48,7 +51,7 @@ class Sudoku:
 
         return storage
     
-    def ID_cord(self):
+    def ID_cord(self): #Works
         """Create ID's for all cells"""
         colw = 77
         rowh = 77
@@ -57,39 +60,60 @@ class Sudoku:
         self.colm = mx // rowh
         self.corvar = (self.colm,self.rowm)
         print(self.corvar)
-        print(mx,my)
+        #print(mx,my)
 
     def list_loop(self):
         '''Creating a single list for center points, b/c the grid is a square, x&y values incriments uniformly'''
-        grid_center:[int] =[]
+        grid_center:list[int] =[]
         '''creating overall list up to boundry of grid by half of each square size'''
         for i in range(0,700,38):
             grid_center.append(i)
         '''Slicing the overall list by incriments of 2 get only the centers.'''
         grid_center= grid_center[1:18:2]
-        print(grid_center[self.colm],grid_center[self.rowm])
+        #print(grid_center[self.colm],grid_center[self.rowm])
+        self.gridcentvalue = (grid_center[self.colm],grid_center[self.rowm])
+        self.gridcentvaluex = grid_center[self.rowm]
+        self.gridcentervaluey = grid_center[self.colm]
+        print(self.gridcentvalue)
         
         
-    def user_input(self):
-        '''Taking typed in string value and placing it into the open 2d array holding all values'''
+    def user_input(self): #break into another function for rendering only
+        '''checking if user input is a single integer'''
+        for i in self.user_input:
+            '''Boleon test on int value type and length, if true modify list'''
+            numbertype = False
+            numbercount = False
+            if int(i) == int:
+                numbertype = True
+            if len(self.user_input) == 1:
+                numbercount = True
+            if numbertype == True:
+                numbercount = True
+                '''Taking typed in string value and placing it into the open 2d array holding all values'''
+                j = int(i)
+                self.board_background[self.colm][self.rowm] = j
+            else:
+                print("please enter a single number")
+
+            
+    def render(self):#ask, why 97 changes to white when changed name on all occurances?
+        '''Generating input onto the screen.'''
+        '''Creating text color, font'''
         textcolor = (255, 0, 0)
-        base_font = pygame.font.Font(None,25)
+        base_font = pygame.font.Font(None,25)  
         text_typed = base_font.render(self.user_text,True,textcolor)
         self.text_box = pygame.Rect(50,50,77,77)
-        '''code to store user input in the empty 2d array'''
-        #self.board_background[self.rowm][self.colm] = user_text
-        self.input_rect = pygame.Rect(self.rowm,self.colm,50,25)
-        self.screen.blit(text_typed,(self.rowm,self.colm))
-        
-
+        self.input_rect = pygame.Rect((50,50),(50,25))#doesn't want to work with importeted coordinants 
+        self.screen.blit(text_typed,self.gridcentvalue)#doesn't work with imported self.rowm,self.colm yet
+    
 
     def win_logic(self):
         '''code when button selecting submit is hit'''
         #to be created
         '''Winning logic for the game'''
-        checklist1:[list] = ['1','2','3','4','5','6','7','8','9']
-        checklist2:[list] = [[1,2,3],[4,5,6],[7,8,9]]
-        userlist:[list] = []
+        checklist1: List[str] = ['1','2','3','4','5','6','7','8','9']
+        checklist2: List[int] = [[1,2,3],[4,5,6],[7,8,9]]
+        userlist: List[int] = []
         
         for i in self.board_background:
             '''checking that each layer has numbers 1-9 and no duplicates in the x & y'''
@@ -103,9 +127,6 @@ class Sudoku:
             listconv = [cs[j:j + 3] for j in range(0,9,3)]
 
 
-            
-        
-
     def run_game(self):
         """Loop for running the game"""
         clock = pygame.time.Clock()
@@ -118,25 +139,26 @@ class Sudoku:
                     """creating the x,y position of mouse to be used in floor division""" 
                     if event.button == 1:
                         self.ID_cord()
-                        self.user_input()
-                        #self.list_loop()
+                        #self.user_input()
+                        self.render()
+                        self.list_loop()
                         #self.win_logic()
             #note: this works when in the click loop but doesn't show like I want.
-            #Also if typing and clicking again, it overwrites. 
-            if event.type == pygame.KEYDOWN:
-                """Adding user text"""
-                if event.key == pygame.K_BACKSPACE:
-                        self.user_text = self.user_text[:-1]
-                else:    
-                    self.user_text += event.unicode
+            #Also if typing and clicking again, it overwrites. Need module that has below code initated on click.
+                if event.type == pygame.KEYDOWN:
+                    """Adding user text"""
+                    if event.key == pygame.K_BACKSPACE:
+                            self.user_text = self.user_text[:-1]
+                    else:    
+                        self.user_text += event.unicode
 
                 '''trying to draw the input rectangle on the screen'''
                 #pygame.draw.rect(self.screen,self.color,self.input_rect,2)
+            self.render()
 
-
-                """Quiting Pygame"""
-                if event.type == pygame.QUIT:
-                    exit()
+            """Quiting Pygame"""
+            if event.type == pygame.QUIT:
+                exit()
             clock.tick(60)
     
             pygame.display.flip()
