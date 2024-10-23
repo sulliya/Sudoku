@@ -12,7 +12,7 @@ class Sudoku:
     def __init__(self,size:List[int],squares:List[int]):
         """Setup base vairables for screen and other definitions"""
         pygame.init()
-        self.screen = pygame.display.set_mode((900,700))
+        self.screen = pygame.display.set_mode((900,700))#surface for interfacing
         self.bg_color = (255,255,255)
         pygame.display.set_caption("Sudoku")
         self.squares = squares
@@ -26,6 +26,7 @@ class Sudoku:
         self.rect_ID = {}
         self.grid: int = 9
         self.board_background:List[str] = [[""]*self.grid for i in range(self.grid)]
+        #test code
         self.testboard:List[str] = [['1','2','3','4','5','6','7','8','9'],['1','2','3','4','5','6','7','8','9'],
                                     ['1','2','3','4','5','6','7','8','9']]
         self.color = pygame.Color('firebrick')
@@ -34,6 +35,7 @@ class Sudoku:
         self.user_text =''
         self.gridcentvaluex:int = () #equals the value center ID based off clicking a square
         self.gridcentervaluey:int = ()
+        self.flag1 = False
 
     def render_board(self): #Note: This code is fine and doesn't need editing
         '''creating the grid space moving in x & y direction'''
@@ -60,9 +62,11 @@ class Sudoku:
         self.colm = mx // rowh
         self.corvar = (self.colm,self.rowm)
         print(self.corvar)
-        #print(mx,my)
+        
 
     def list_loop(self):
+        if self.flag1 == False:
+            pass
         '''Creating a single list for center points, b/c the grid is a square, x&y values incriments uniformly'''
         grid_center:list[int] =[]
         '''creating overall list up to boundry of grid by half of each square size'''
@@ -74,29 +78,30 @@ class Sudoku:
         self.gridcentvalue = (grid_center[self.colm],grid_center[self.rowm])
         self.gridcentvaluex = grid_center[self.rowm]
         self.gridcentervaluey = grid_center[self.colm]
-        print(self.gridcentvalue)
+      
         
         
     def user_input(self): #break into another function for rendering only
         '''checking if user input is a single integer'''
-        for i in self.user_input:
+        for i in self.user_text:
             '''Boleon test on int value type and length, if true modify list'''
             numbertype = False
             numbercount = False
             if int(i) == int:
                 numbertype = True
-            if len(self.user_input) == 1:
+            if len(self.user_text) == 1:
                 numbercount = True
             if numbertype == True:
-                numbercount = True
+                numbercount == True
                 '''Taking typed in string value and placing it into the open 2d array holding all values'''
                 j = int(i)
                 self.board_background[self.colm][self.rowm] = j
             else:
                 print("please enter a single number")
-
-            
-    def render(self):#ask, why 97 changes to white when changed name on all occurances?
+        self.board_background[self.colm][self.rowm] = self.user_text
+        print(self.board_background[self.colm][self.rowm])# replacing works. but not re-rendering
+        
+    def render(self):#ask, why .render changes to white when changed name on all occurances?
         '''Generating input onto the screen.'''
         '''Creating text color, font'''
         textcolor = (255, 0, 0)
@@ -133,28 +138,34 @@ class Sudoku:
         self.screen.fill(self.bg_color)
         self.render_board()
         while True:
+            #flag1 to initialize modules based on input after screen is rendered.
+            self.flag1 = False
             for event in pygame.event.get():
                 """Determine mouse click until moved into its own code to be called in"""
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    """creating the x,y position of mouse to be used in floor division""" 
                     if event.button == 1:
+                        self.flag1 = True
                         self.ID_cord()
-                        #self.user_input()
-                        self.render()
+                        self.user_input()
                         self.list_loop()
+                        self.render()
                         #self.win_logic()
             #note: this works when in the click loop but doesn't show like I want.
             #Also if typing and clicking again, it overwrites. Need module that has below code initated on click.
                 if event.type == pygame.KEYDOWN:
+                    self.user_text = ''
                     """Adding user text"""
                     if event.key == pygame.K_BACKSPACE:
                             self.user_text = self.user_text[:-1]
-                    else:    
+                    else:   
                         self.user_text += event.unicode
+                        #only leaves first number, only works for number input
+                        self.user_text = self.user_text[0]
 
                 '''trying to draw the input rectangle on the screen'''
                 #pygame.draw.rect(self.screen,self.color,self.input_rect,2)
-            self.render()
+            if self.flag1 == True:
+                self.render()
 
             """Quiting Pygame"""
             if event.type == pygame.QUIT:
