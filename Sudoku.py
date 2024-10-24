@@ -50,8 +50,24 @@ class Sudoku:
                 
                 pygame.draw.rect(self.screen, (0,0,0), (i0, i1, self.size[0], self.size[1]), 1)
                 storage.append((i0, i1, self.size[0], self.size[0]))
+        
+        #Creating second storage 
+        storage2 = []
+        squares2 = (3,3)
+        size2 = (233,233)
 
-        return storage
+        x = int((700 - (size2[0] * squares2 [0]))/2)
+        y = int((700 - (size2[1] * squares2[1]))/2)
+
+        for a in range(squares2[0]):
+            for b in range(squares2[1]):
+                i0 =(x + (a * size2[0]))
+                i1= (y + (b * size2[1]))
+
+                pygame.draw.rect(self.screen, (0,0,0), (i0, i1, size2[0], size2[1]), 5)
+                storage.append((i0, i1, size2[0], size2[0]))
+
+        return storage,storage2
     
     def ID_cord(self): #Works
         """Create ID's for all cells"""
@@ -105,12 +121,16 @@ class Sudoku:
         '''Generating input onto the screen.'''
         '''Creating text color, font'''
         textcolor = (255, 0, 0)
-        base_font = pygame.font.Font(None,25)  
+        base_font = pygame.font.Font(None,35)  
         text_typed = base_font.render(self.user_text,True,textcolor)
         self.text_box = pygame.Rect(50,50,77,77)
-        self.input_rect = pygame.Rect((50,50),(50,25))#doesn't want to work with importeted coordinants 
-        self.screen.blit(text_typed,self.gridcentvalue)#doesn't work with imported self.rowm,self.colm yet
-    
+        self.input_rect = pygame.Rect((50,50),(50,25))
+        #white box overrights background zone with white space prior writing new number into background.
+        whitebox = pygame.Surface((25,25))
+        whitebox.fill((255,255,255))
+        self.screen.blit(whitebox,self.gridcentvalue)
+        self.screen.blit(text_typed,self.gridcentvalue)
+        
 
     def win_logic(self):
         '''code when button selecting submit is hit'''
@@ -159,11 +179,12 @@ class Sudoku:
                             self.user_text = self.user_text[:-1]
                     else:   
                         self.user_text += event.unicode
-                        #only leaves first number, only works for number input
+                        #only takes first number, only works for number input
                         self.user_text = self.user_text[0]
-
+                   
                 '''trying to draw the input rectangle on the screen'''
                 #pygame.draw.rect(self.screen,self.color,self.input_rect,2)
+             
             if self.flag1 == True:
                 self.render()
 
