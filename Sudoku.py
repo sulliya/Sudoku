@@ -91,8 +91,8 @@ class Sudoku:
                         temp.append(m)
                         self.permlist[n] = m
 
-        print(self.permlist)      
-        print(self.board_background)
+        #print(self.permlist)      
+        #print(self.board_background)
     def ID_cord(self): #Works
         """Create ID's for all cells"""
         colw = 77
@@ -102,6 +102,7 @@ class Sudoku:
         self.rowm = mx // colw
         self.corvar = (self.colm,self.rowm)
         print(self.corvar)
+        print(mx,my)
         
         
 
@@ -109,17 +110,22 @@ class Sudoku:
         if self.flag1 == False:
             pass
         '''Creating a single list for center points, b/c the grid is a square, x&y values incriments uniformly'''
-        grid_center:list[int] =[]
+        self.grid_center:List[int] =[]
         '''creating overall list up to boundry of grid by half of each square size'''
+        if self.rowm > 8:
+            return
         for i in range(0,700,38):
-            grid_center.append(i)
+            self.grid_center.append(i)
         '''Slicing the overall list by incriments of 2 get only the centers.'''
-        grid_center= grid_center[1:18:2]
-        #print(grid_center[self.rowm],grid_center[self.colm])
-        self.gridcentvalue = (grid_center[self.rowm],grid_center[self.colm])
-        self.gridcentvaluex = grid_center[self.colm]
-        self.gridcentervaluey = grid_center[self.rowm]
-        #self.permgridcentvalue = (grid_center[],grid_center[])
+        self.grid_center= self.grid_center[1:18:2]
+        #print(self.grid_center[self.rowm],self.grid_center[self.colm])
+        self.gridcentvalue = (self.grid_center[self.rowm],self.grid_center[self.colm])
+        self.gridcentvaluex = self.grid_center[self.colm]
+        self.gridcentervaluey = self.grid_center[self.rowm]
+        #self.permgridcentvalue = (self.grid_center[],self.grid_center[])
+        #premade selected grid locations
+        self.pkeys = list(self.permlist.keys())
+        self.pvalue = list(self.permlist.values())
         
         
         
@@ -148,6 +154,11 @@ class Sudoku:
     
         
     def render(self):
+        if self.rowm > 8:
+            return
+        #Creating submit button to check if game is complete
+
+        
         '''checking if user input is a single integer'''
         for i in self.user_text:
             '''Boleon test on int value type and length, if true modify list'''
@@ -159,65 +170,95 @@ class Sudoku:
                 numbercount = True
             if numbertype == True:
                 numbercount == True
-                '''Taking typed in string value and placing it into the open 2d array holding all values'''
-                #j = int(i)
-                #self.board_background[self.colm][self.rowm] = j
-            #else:
-                #print("please enter a single number")
+        
+               
+        
+        
+        cord = (self.colm,self.rowm)
         for i,j in self.permlist.items():
-            cord = (self.colm,self.rowm)
-            for i,j in self.permlist.items():
-                if j in cord:
-                    break
-                if j == cord:
-                    print( j == cord)
-                    break
-            #if j in self.permlist.values():
-                #break
-                
-            self.board_background[self.colm][self.rowm] = self.user_text#Stores the value in its proper place
-            #Below is original def render()
-            #'''Generating input onto the screen.'''
-            #'''Creating text color, font'''
-            textcolor = (255, 0, 0)
-            base_font = pygame.font.Font(None,35)  
-            text_typed = base_font.render(self.user_text,True,textcolor)
-            self.text_box = pygame.Rect(50,50,77,77)#not needed
-            self.input_rect = pygame.Rect((50,50),(50,25))#not needed
-            #white box overrights background zone with white space prior writing new number into background.
-            whitebox = pygame.Surface((25,25))
-            whitebox.fill((255,255,255))
-            self.screen.blit(whitebox,self.gridcentvalue)
-            self.screen.blit(text_typed,self.gridcentvalue)
-            #print(self.board_background)
-            return
+            if j == cord:
+                return
+               
+        self.board_background[self.colm][self.rowm] = self.user_text#Stores the value in its proper place
+        #Below is original def render()
+        #'''Generating input onto the screen.'''
+        #'''Creating text color, font'''
+        textcolor = (255, 0, 0)
+        base_font = pygame.font.Font(None,35)  
+        text_typed = base_font.render(self.user_text,True,textcolor)
+        self.text_box = pygame.Rect(50,50,77,77)#not needed
+        self.input_rect = pygame.Rect((50,50),(50,25))#not needed
+        #white box overrights background zone with white space prior writing new number into background.
+        whitebox = pygame.Surface((25,25))
+        whitebox.fill((255,255,255))
+        self.screen.blit(whitebox,self.gridcentvalue)
+        self.screen.blit(text_typed,self.gridcentvalue)
+        #printing the premade pieces by looping through the list.
+        l = 0
+        for i,j in self.pvalue:
+            k = self.pkeys[l]
+            l = l + 1 
+            self.screen.blit(whitebox,(self.grid_center[j],self.grid_center[i]))
+            permlistkey = base_font.render(k,True,textcolor)
+            self.screen.blit(permlistkey,(self.grid_center[j],self.grid_center[i]))
+        
+        #print(self.board_background)
+        return
 
-            #rendering difficulty continuesly to master list.
-            #over-riding user input to keep board level round perminent.
-            #for key in self.permlist.keys():
-                #x = self.permlist[key][0]
-                #y = self.permlist[key][1]
-                #self.board_background[x][y] = key
-
+    def Button(self):
+        #event button that triggers win_logic by user.
+        rect = pygame.rect.Rect(750, 0, 77, 77)
+        text = "check"
+        textcolor = (0,0,0)
+        boxcolor = (128,128,128)
+        font = pygame.font.Font(None,30)
+        buttonrender = font.render(text, True, textcolor)
+        pygame.draw.rect(self.screen, boxcolor,rect,0,5)
+        pygame.draw.rect(self.screen,textcolor,rect,5,0)
+        self.screen.blit(buttonrender,(750+10,10+15))
+        if self.rowm == 9 or 10:
+            if self.colm == 0:
+                self.win_logic()
 
     def win_logic(self):
-        #'''code when button selecting submit is hit'''
-        #to be created
-        #'''Winning logic for the game'''
-        checklist1: List[str] = ['1','2','3','4','5','6','7','8','9']
-        checklist2: List[int] = [[1,2,3],[4,5,6],[7,8,9]]
-        userlist: List[int] = []
-        
-        for i in self.board_background:
-            #'''checking that each layer has numbers 1-9 and no duplicates in the x & y'''
-            if self.board_background[set(i) == checklist1][set(i) == checklist1]:
-                check1 = True
-            #'''Break lists of 9 into 3, then check to see if they conatain numbers 1-9'''
-            #'''Slicing the 2D 9x9 array into 3's to then stack and check'''
-            #'''converting string to int'''
-            listconv = []
-            cs = [int(y) for x in self.board_background for y in x]
-            listconv = [cs[j:j + 3] for j in range(0,9,3)]
+        ytest = False
+        xtest = False
+        #taking y column of final user list and turning it into it's own 2D array.
+        t = 0
+        ylist = []
+        twoDylist = []
+        for i in range(0,9,1): #ranging 0-9 exclusive
+            for row in self.board_background:
+                x = row[t] #iteraties through entire 2D picking only y placement in row
+                ylist.append[x]
+            t = t + 1
+        for w in range(0,len(ylist),9): #Have to break the 1D list of all Y's into 2D
+            twoDylist.append(ylist[w:w + 9])
+        #check for duplicates in Y 2D array.
+        for o in twoDylist:
+            ychecklist = []
+            for p in o:
+                if p not in ychecklist:
+                    ychecklist.append(p)
+            if len(ychecklist) != 8:
+                ytest = False
+                return print("Inputs incorrect")
+        if len(ychecklist) == 8:
+            ytest = True
+        #Checking for duplicates in X direction only.
+        #Don't need to break the 2d array as it is already set for x direction
+        for v in self.board_background:
+            xchecktest = []
+            for n in v:
+                if n not in xchecktest:
+                    xchecktest.append(n)
+            if len(xchecktest) != 8:
+                return print("Inputs incorrect")
+        if len(xchecktest) == 8:
+            xtest = True
+        if xtest and ytest == True:
+            print("you've won")
+            exit()
 
 
     def run_game(self):
@@ -226,6 +267,7 @@ class Sudoku:
         self.screen.fill(self.bg_color)
         self.render_board()
         self.difficult()
+        self.Button()
         while True:
             #flag1 to initialize modules based on input after screen is rendered.
             self.flag1 = False
@@ -238,7 +280,7 @@ class Sudoku:
                         #self.user_input()
                         self.list_loop()
                         self.render()
-                        #self.win_logic()
+                        self.Button()
             #note: this works when in the click loop but doesn't show like I want.
             #Also if typing and clicking again, it overwrites. Need module that has below code initated on click.
                 if event.type == pygame.KEYDOWN:
